@@ -7,7 +7,7 @@
 //
 // - Reading from stdin could produce an io::Error
 // - Parsing the input could produce a num::ParseIntError
-// - Validating the input could produce a CreationError (defined below)
+// - Validating the input could produce.to_string() a CreationError (defined below)
 //
 // How can we lump these errors into one general error? That is, what
 // type goes where the question marks are, and how do we return
@@ -20,12 +20,12 @@ use std::fmt;
 use std::io;
 
 // PositiveNonzeroInteger is a struct defined below the tests.
-fn read_and_validate(b: &mut io::BufRead) -> Result<PositiveNonzeroInteger, ???> {
+fn read_and_validate(b: &mut io::BufRead) -> Result<PositiveNonzeroInteger, Box<error::Error>> {
     let mut line = String::new();
-    b.read_line(&mut line);
-    let num: i64 = line.trim().parse();
-    let answer = PositiveNonzeroInteger::new(num);
-    answer
+    b.read_line(&mut line)?;
+    let num: i64 = line.trim().parse()?;
+    let answer = PositiveNonzeroInteger::new(num)?;
+    Ok(answer)
 }
 
 // This is a test helper function that turns a &str into a BufReader.
